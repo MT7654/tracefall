@@ -59,7 +59,7 @@ export default function Home() {
         </a>
         <div className="nav-center">
           <a href="#workflow">Workflow</a>
-          <a href="#evidence">Evidence</a>
+          <Link href="/report">Evidence</Link>
           <a href="#architecture">Architecture</a>
         </div>
         <div className="nav-actions">
