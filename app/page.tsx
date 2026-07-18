@@ -20,7 +20,7 @@ const stages = [
   { name: "Report synthesized", detail: "Best-supported explanation", icon: ShieldCheck, provider: "ai&" },
 ];
 
-const sponsorNames = ["DAYTONA", "ai&", "DOUBLEWORD", "NOSANA", "OXYLABS"];
+const platformNames = ["DAYTONA", "ai&", "DOUBLEWORD", "NOSANA", "OXYLABS"];
 
 export default function Home() {
   const [state, setState] = useState<"idle" | "running" | "complete" | "error">("idle");
@@ -125,7 +125,7 @@ export default function Home() {
       </section>
 
       <section className="sponsor-strip">
-        <div className="shell sponsor-inner"><span>POWERED BY</span>{sponsorNames.map((name) => <strong key={name}>{name}</strong>)}</div>
+        <div className="shell sponsor-inner"><span>INVESTIGATION STACK</span>{platformNames.map((name) => <strong key={name}>{name}</strong>)}</div>
       </section>
 
       <section className="dashboard-section shell" id="workflow">
@@ -143,7 +143,7 @@ export default function Home() {
 
         <div className="control-grid">
           <div className="panel journey-panel">
-            <div className="panel-head"><div><span className="panel-kicker">MONITORED JOURNEY</span><h3>Storefront checkout</h3></div><Link href="/demo-store" target="_blank">View target <ExternalLink size={13}/></Link></div>
+            <div className="panel-head"><div><span className="panel-kicker">REFERENCE JOURNEY · MVP TARGET</span><h3>Storefront checkout</h3></div><Link href="/demo-store" target="_blank">View target <ExternalLink size={13}/></Link></div>
             <div className="journey-steps">
               <JourneyStep number="01" title="Open product page" meta="200 · 384 ms" status="done" />
               <JourneyStep number="02" title="Add item to cart" meta="Interaction passed" status="done" />
@@ -178,9 +178,9 @@ export default function Home() {
       {report && <Report report={report} copied={copied} onCopy={copyReport} reportRef={reportRef} />}
 
       <section className="architecture shell" id="architecture">
-        <div className="section-heading compact"><div><span className="kicker">03 / PURPOSE-BUILT ORCHESTRATION</span><h2>Every sponsor has a real job.</h2></div></div>
+        <div className="section-heading compact"><div><span className="kicker">03 / PURPOSE-BUILT ORCHESTRATION</span><h2>Each system strengthens the evidence.</h2><p>Selected for the execution, web intelligence, retrieval, reasoning, and verification capabilities the investigation needs.</p></div></div>
         <div className="architecture-flow">
-          {[{n:"01",t:"Reproduce",p:"Daytona",d:"Run the broken journey in a clean sandbox."},{n:"02",t:"Compare",p:"Oxylabs",d:"Test the same resource from SG and US."},{n:"03",t:"Retrieve",p:"Doubleword",d:"Find the closest historical evidence."},{n:"04",t:"Reason",p:"Kimi via ai&",d:"Generate structured competing causes."},{n:"05",t:"Challenge",p:"Nosana",d:"Fan out three independent GPU reviews."}].map((item, index) => <div className="architecture-node" key={item.p}><span>{item.n}</span><div className="arch-icon"><Code2 size={20}/></div><h3>{item.t}</h3><strong>{item.p}</strong><p>{item.d}</p>{index < 4 && <ChevronRight className="arch-arrow"/>}</div>)}
+          {[{n:"01",t:"Reproduce",p:"Daytona",d:"Run the broken journey in a clean sandbox."},{n:"02",t:"Compare",p:"Oxylabs",d:"Test the same resource from SG and US."},{n:"03",t:"Retrieve",p:"Doubleword",d:"Find the closest historical evidence."},{n:"04",t:"Reason",p:"Kimi via ai&",d:"Generate a structured cause analysis."},{n:"05",t:"Challenge",p:"Nosana",d:"Score three competing causes on independent GPU inference."}].map((item, index) => <div className="architecture-node" key={item.p}><span>{item.n}</span><div className="arch-icon"><Code2 size={20}/></div><h3>{item.t}</h3><strong>{item.p}</strong><p>{item.d}</p>{index < 4 && <ChevronRight className="arch-arrow"/>}</div>)}
         </div>
       </section>
 
