@@ -1,0 +1,14 @@
+.env
+.env.local
+.env.*.local
+node_modules/
+.next/
+out/
+coverage/
+playwright-report/
+test-results/
+.tmp-*/
+node_modules_partial/
+*.tsbuildinfo
+dev.stdout.log
+dev.stderr.log

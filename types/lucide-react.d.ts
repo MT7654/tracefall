@@ -1,0 +1,31 @@
+declare module "lucide-react" {
+  import type { ForwardRefExoticComponent, RefAttributes, SVGProps } from "react";
+  export type LucideIcon = ForwardRefExoticComponent<SVGProps<SVGSVGElement> & { size?: number | string } & RefAttributes<SVGSVGElement>>;
+  export const Activity: LucideIcon;
+  export const ArrowLeft: LucideIcon;
+  export const ArrowRight: LucideIcon;
+  export const Check: LucideIcon;
+  export const ChevronRight: LucideIcon;
+  export const CircleDot: LucideIcon;
+  export const Clock3: LucideIcon;
+  export const CloudCog: LucideIcon;
+  export const Code2: LucideIcon;
+  export const Copy: LucideIcon;
+  export const Database: LucideIcon;
+  export const ExternalLink: LucideIcon;
+  export const FileSearch: LucideIcon;
+  export const Globe2: LucideIcon;
+  export const Minus: LucideIcon;
+  export const Play: LucideIcon;
+  export const Plus: LucideIcon;
+  export const Radar: LucideIcon;
+  export const RefreshCw: LucideIcon;
+  export const ShieldCheck: LucideIcon;
+  export const ShoppingBag: LucideIcon;
+  export const Sparkles: LucideIcon;
+  export const Star: LucideIcon;
+  export const Terminal: LucideIcon;
+  export const TriangleAlert: LucideIcon;
+  export const Waypoints: LucideIcon;
+  export const Zap: LucideIcon;
+}
