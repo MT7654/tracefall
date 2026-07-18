@@ -26,10 +26,13 @@ The reference store is a controlled validation target, not a claimed production 
 6. Run `npm run build`.
 7. Run `npm run dev`.
 8. Open `/` and click **Launch autonomous investigation**.
-9. Confirm all seven timeline stages complete.
-10. Confirm the final cause mentions the third-party payment script.
-11. Open `/demo-store`, add the item, and proceed to checkout.
-12. Confirm the seeded `PaymentSDK is not defined` failure appears.
+9. Confirm navigation to `/investigate` and all seven timeline stages complete.
+10. Confirm automatic navigation to `/report`.
+11. Confirm the final cause mentions the third-party payment script.
+12. Open `/demo-store`, add the item, and proceed to checkout.
+13. Confirm the seeded `PaymentSDK is not defined` failure appears.
+
+The report is stored in browser `sessionStorage` under `tracefall:lastReport`. Opening `/report` directly in a fresh session intentionally shows a safe empty state with a link to start an investigation.
 
 ## Headless/API path
 

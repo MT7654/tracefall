@@ -8,6 +8,7 @@ import {
   ShieldCheck, Sparkles, Terminal, TriangleAlert, Waypoints, Zap,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import type { InvestigationReport } from "@/lib/types";
 import TraceCore3D from "@/components/TraceCore3D";
 
@@ -24,6 +25,7 @@ const stages = [
 const platformNames = ["DAYTONA", "ai&", "DOUBLEWORD", "NOSANA", "OXYLABS"];
 
 export default function Home() {
+  const router = useRouter();
   const [state, setState] = useState<"idle" | "running" | "complete" | "error">("idle");
   const [step, setStep] = useState(-1);
   const [report, setReport] = useState<InvestigationReport | null>(null);
@@ -36,21 +38,8 @@ export default function Home() {
     return () => window.clearInterval(timer);
   }, [state]);
 
-  async function runInvestigation() {
-    setState("running");
-    setStep(0);
-    setReport(null);
-    try {
-      const response = await fetch("/api/investigate", { method: "POST" });
-      if (!response.ok) throw new Error("Investigation API failed");
-      const result = (await response.json()) as InvestigationReport;
-      setReport(result);
-      setStep(stages.length - 1);
-      setState("complete");
-      window.setTimeout(() => reportRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 450);
-    } catch {
-      setState("error");
-    }
+  function runInvestigation() {
+    router.push("/investigate");
   }
 
   async function copyReport() {

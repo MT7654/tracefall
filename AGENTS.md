@@ -17,7 +17,7 @@ npm run build
 npm run dev
 ```
 
-Then verify `POST /api/investigate`, `/api/journey-probe`, `/demo-store`, and the main dashboard as described in `EVALUATION.md`.
+Then verify `POST /api/investigate`, `/api/journey-probe`, `/demo-store`, and the `/` → `/investigate` → `/report` browser flow as described in `EVALUATION.md`.
 
 ## Interpretation rules
 

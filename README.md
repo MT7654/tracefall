@@ -74,10 +74,12 @@ Open these routes:
 | Route | Expected behavior |
 |---|---|
 | `http://localhost:3000/` | Tracefall command center loads |
+| `http://localhost:3000/investigate` | Starts the autonomous run and advances through the execution stages |
+| `http://localhost:3000/report` | Displays the latest browser-session report, or a safe empty state |
 | `http://localhost:3000/demo-store` | Reference storefront loads; checkout produces the seeded SDK error |
 | `http://localhost:3000/api/journey-probe` | Returns JSON describing the public reference journey |
 
-On `/`, click **Launch autonomous investigation**. The seven-stage execution trace should complete and reveal the incident report.
+On `/`, click **Launch autonomous investigation**. The app routes to `/investigate`, completes the seven-stage execution trace, stores the result in browser session storage, and automatically routes to `/report`.
 
 Expected diagnosis:
 
@@ -213,7 +215,9 @@ The integration checker is intentionally separate from deterministic evaluation.
 
 ```text
 app/
-  page.tsx                  Product dashboard and incident report
+  page.tsx                  Product landing page and workflow preview
+  investigate/page.tsx      Auto-running agent workflow
+  report/page.tsx           Session-backed incident report
   demo-store/page.tsx       Deterministically broken checkout target
   api/investigate/route.ts  Workflow entrypoint
   api/journey-probe/route.ts Public regional probe
@@ -223,6 +227,7 @@ lib/
   demo-data.ts              Deterministic evidence fixtures
   types.ts                  Shared report and receipt contracts
 public/brand/               Generated Tracefall logo assets
+components/                 Shared 3D and report views
 EVALUATION.md               Machine-oriented review steps
 ARCHITECTURE.md             Detailed decisions and limitations
 ```
