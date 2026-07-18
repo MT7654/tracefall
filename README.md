@@ -41,7 +41,7 @@ Run the target journey separately at `http://localhost:3000/demo-store`.
 | **Oxylabs** | Fetches the public journey probe through Singapore and US Residential Proxy exits | `lib/integrations.ts → runOxylabs()` | Regional HTTP status, latency, SDK state |
 | **Doubleword** | Embeds five evidence records using Qwen3-Embedding-8B and ranks them with cosine similarity | `lib/integrations.ts → runDoubleword()` | Ranked historical evidence and model receipt |
 | **Kimi AI via ai&** | Generates structured hypotheses, summary, confidence, and recommended action | `lib/integrations.ts → runAiAnd()` | ai& completion ID and generated diagnosis |
-| **Nosana** | Verifies the supplied Qwen GPU deployment and evaluates three competing causes concurrently | `lib/integrations.ts → runNosana()` | Deployment ID, parallel hypothesis scores |
+| **Nosana** | Verifies the supplied Qwen GPU deployment and scores three competing causes in one bounded structured review | `lib/integrations.ts → runNosana()` | Deployment ID, GPU hypothesis scores |
 
 This is intentionally a feedback loop rather than an API parade: Daytona reproduces → retrieval and regional probes enrich evidence → ai& proposes causes → Nosana challenges them → the report exposes receipts for every system.
 
@@ -55,7 +55,7 @@ flowchart LR
     DAY --> DW["Doubleword\nEvidence embeddings"]
     OXY --> AI["Kimi K2.7 via ai&\nGenerate hypotheses"]
     DW --> AI
-    AI --> NOS["Nosana Qwen\n3 parallel reviewers"]
+    AI --> NOS["Nosana Qwen 3.5 9B\nstructured GPU review"]
     NOS --> REPORT["Evidence-backed report"]
 ```
 
@@ -94,7 +94,7 @@ AIAND_MODEL=moonshotai/kimi-k2.7-code
 
 NOSANA_API_KEY=
 NOSANA_DEPLOYMENT_ID=
-NOSANA_MODEL=qwen3.6:27b
+NOSANA_MODEL=qwen3.5:9b
 NOSANA_INFERENCE_URL=
 
 NEXT_PUBLIC_APP_URL=http://localhost:3000

@@ -35,9 +35,9 @@ export function demoReport(): InvestigationReport {
       { label: "Selector regression simulation", score: 0.41 },
     ],
     hypotheses: [
-      { title: "Payment script failed to load", confidence: 88, supported: true, evidence: "Matches the 503 request and undefined SDK symbol.", provider: "Nosana · Qwen 3.6" },
-      { title: "Checkout selector changed", confidence: 21, supported: false, evidence: "The selector is unchanged and the control is present.", provider: "Nosana · Qwen 3.6" },
-      { title: "Checkout API returned invalid data", confidence: 34, supported: false, evidence: "No checkout API request occurs before SDK initialization.", provider: "Nosana · Qwen 3.6" },
+      { title: "Payment script failed to load", confidence: 88, supported: true, evidence: "Matches the 503 request and undefined SDK symbol.", provider: "Nosana · Qwen 3.5 9B" },
+      { title: "Checkout selector changed", confidence: 21, supported: false, evidence: "The selector is unchanged and the control is present.", provider: "Nosana · Qwen 3.5 9B" },
+      { title: "Checkout API returned invalid data", confidence: 34, supported: false, evidence: "No checkout API request occurs before SDK initialization.", provider: "Nosana · Qwen 3.5 9B" },
     ],
     providers: [],
   };

@@ -161,7 +161,7 @@ export async function runNosana(seed: Hypothesis[]): Promise<{ receipt: Provider
   const start = Date.now();
   const apiKey = process.env.NOSANA_API_KEY;
   const deploymentId = process.env.NOSANA_DEPLOYMENT_ID;
-  if (!apiKey || !deploymentId) return fallback("nosana", "Nosana parallel evaluators", start, "Missing deployment configuration");
+  if (!apiKey || !deploymentId) return fallback("nosana", "Nosana hypothesis reviewer", start, "Missing deployment configuration");
   try {
     const base = process.env.NOSANA_API_BASE_URL || "https://dashboard.k8s.prd.nos.ci/api";
     const response = await timeout(fetch(`${base}/deployments/${deploymentId}`, { headers: { Authorization: `Bearer ${apiKey}` } }), 12_000, "Nosana deployment lookup");
@@ -171,28 +171,63 @@ export async function runNosana(seed: Hypothesis[]): Promise<{ receipt: Provider
     if (!endpoint) {
       return {
         hypotheses: seed,
-        receipt: { provider: "nosana", label: "Nosana parallel evaluators", mode: "live", status: "success", durationMs: elapsed(start), externalId: deploymentId, detail: "GPU deployment verified; recorded evaluator results shown while its public endpoint warms." },
+        receipt: { provider: "nosana", label: "Nosana hypothesis reviewer", mode: "live", status: "success", durationMs: elapsed(start), externalId: deploymentId, detail: "GPU deployment verified; recorded evaluator results shown while its public endpoint warms." },
       };
     }
-    const evaluate = async (hypothesis: Hypothesis) => {
-      const result = await timeout(fetch(`${endpoint.replace(/\/$/, "")}/v1/chat/completions`, {
+    try {
+      const schema = {
+        type: "object",
+        properties: {
+          hypotheses: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                title: { type: "string" },
+                supported: { type: "boolean" },
+                confidence: { type: "number" },
+                evidence: { type: "string" },
+              },
+              required: ["title", "supported", "confidence", "evidence"],
+            },
+          },
+        },
+        required: ["hypotheses"],
+      };
+      const prompt = `Evaluate all three incident hypotheses against the evidence. Preserve each title exactly. Return only the requested JSON.\nEvidence: ${evidenceRecords.join(" ")}\nHypotheses: ${JSON.stringify(seed.map(({ title, supported, confidence }) => ({ title, priorSupported: supported, priorConfidence: confidence })))}`;
+      const result = await timeout(fetch(`${endpoint.replace(/\/$/, "")}/api/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ model: process.env.NOSANA_MODEL || "qwen3.6:27b", stream: false, messages: [{ role: "user", content: `Return JSON with supported, confidence, evidence. Evaluate: ${hypothesis.title}. Evidence: ${evidenceRecords.join(" ")}` }] }),
-      }), 22_000, `Nosana evaluator ${hypothesis.title}`);
+        body: JSON.stringify({
+          model: process.env.NOSANA_MODEL || "qwen3.5:9b",
+          stream: false,
+          keep_alive: "30m",
+          format: schema,
+          messages: [{ role: "user", content: prompt }],
+          options: { temperature: 0, num_predict: 256, num_ctx: 4096 },
+        }),
+      }), 28_000, "Nosana hypothesis review");
       if (!result.ok) throw new Error(`inference returned ${result.status}`);
-      const json = await result.json() as { choices?: Array<{ message?: { content?: string } }> };
-      const parsed = JSON.parse(json.choices?.[0]?.message?.content || "{}") as { supported?: boolean; confidence?: number; evidence?: string };
-      return { ...hypothesis, supported: parsed.supported ?? hypothesis.supported, confidence: parsed.confidence ?? hypothesis.confidence, evidence: parsed.evidence ?? hypothesis.evidence };
-    };
-    try {
-      const hypotheses = await Promise.all(seed.map(evaluate));
-      return { hypotheses, receipt: { provider: "nosana", label: "Nosana parallel evaluators", mode: "live", status: "success", durationMs: elapsed(start), externalId: deploymentId, detail: "Three hypotheses evaluated concurrently on decentralized GPU inference." } };
+      const json = await result.json() as { message?: { content?: string } };
+      const parsed = JSON.parse(json.message?.content || "{}") as { hypotheses?: Array<{ title?: string; supported?: boolean; confidence?: number; evidence?: string }> };
+      if (!Array.isArray(parsed.hypotheses) || parsed.hypotheses.length !== seed.length) throw new Error("inference returned an incomplete hypothesis set");
+      const hypotheses = seed.map((hypothesis, index) => {
+        const scored = parsed.hypotheses?.find((item) => item.title === hypothesis.title) || parsed.hypotheses?.[index];
+        const confidence = Number(scored?.confidence);
+        return {
+          ...hypothesis,
+          supported: scored?.supported ?? hypothesis.supported,
+          confidence: Number.isFinite(confidence) ? Math.max(0, Math.min(100, Math.round(confidence))) : hypothesis.confidence,
+          evidence: scored?.evidence || hypothesis.evidence,
+          provider: "Nosana · Qwen 3.5 9B",
+        };
+      });
+      return { hypotheses, receipt: { provider: "nosana", label: "Nosana hypothesis reviewer", mode: "live", status: "success", durationMs: elapsed(start), externalId: deploymentId, detail: "Three competing causes scored together on a Nosana RTX 3090 deployment." } };
     } catch (error) {
-      return { hypotheses: seed, receipt: { provider: "nosana", label: "Nosana parallel evaluators", mode: "live", status: "fallback", durationMs: elapsed(start), externalId: deploymentId, detail: `Running GPU deployment reached; recorded scores retained after ${message(error).slice(0, 64)}.` } };
+      return { hypotheses: seed, receipt: { provider: "nosana", label: "Nosana hypothesis reviewer", mode: "live", status: "fallback", durationMs: elapsed(start), externalId: deploymentId, detail: `Running GPU deployment reached; recorded scores retained after ${message(error).slice(0, 64)}.` } };
     }
   } catch (error) {
-    return fallback("nosana", "Nosana parallel evaluators", start, message(error));
+    return fallback("nosana", "Nosana hypothesis reviewer", start, message(error));
   }
 }
 

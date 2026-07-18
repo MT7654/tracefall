@@ -16,7 +16,7 @@ const stages = [
   { name: "Regions compared", detail: "Singapore + United States", icon: Globe2, provider: "Oxylabs" },
   { name: "Evidence retrieved", detail: "Semantic similarity search", icon: FileSearch, provider: "Doubleword" },
   { name: "Hypotheses generated", detail: "Kimi K2.7 structured analysis", icon: Sparkles, provider: "ai&" },
-  { name: "Hypotheses challenged", detail: "3 parallel GPU investigators", icon: Waypoints, provider: "Nosana" },
+  { name: "Hypotheses challenged", detail: "3 causes · 1 GPU review", icon: Waypoints, provider: "Nosana" },
   { name: "Report synthesized", detail: "Best-supported explanation", icon: ShieldCheck, provider: "ai&" },
 ];
 
