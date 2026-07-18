@@ -27,6 +27,6 @@ export async function investigate(): Promise<InvestigationReport> {
     const confidence = Number(aiand.analysis.confidence);
     if (Number.isFinite(confidence)) report.confidence = Math.max(0, Math.min(100, Math.round(confidence)));
   }
-  report.mode = report.providers.every((item) => item.mode === "live") ? "live" : "hybrid";
+  report.mode = report.providers.every((item) => item.mode === "live" && item.status === "success") ? "live" : "hybrid";
   return report;
 }

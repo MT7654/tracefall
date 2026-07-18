@@ -42,7 +42,9 @@ export async function runDaytona(): Promise<{ receipt: ProviderReceipt; evidence
       console.log(JSON.stringify(evidence));
     `;
     const response = await timeout(sandbox.process.codeRun(code, undefined, 12), 15_000, "Daytona code run");
-    const parsed = JSON.parse(response.result.trim()) as Record<string, unknown>;
+    const jsonLine = response.result.split(/\r?\n/).find((line) => line.trim().startsWith("{"));
+    if (!jsonLine) throw new Error("Daytona returned no structured evidence line");
+    const parsed = JSON.parse(jsonLine.trim()) as Record<string, unknown>;
     return {
       evidence: parsed,
       receipt: {
@@ -135,18 +137,20 @@ export async function runAiAnd(): Promise<{ receipt: ProviderReceipt; analysis?:
     const completion = await timeout(client.chat.completions.create({
       model: process.env.AIAND_MODEL || "moonshotai/kimi-k2.7-code",
       temperature: 0.2,
-      max_tokens: 2048,
+      max_tokens: 1024,
       reasoning_effort: "low",
       response_format: { type: "json_object" },
       messages: [
         { role: "system", content: "You are an incident investigator. Return strict JSON with keys likelyCause, confidence (integer), summary, recommendation, and hypotheses (array of three short strings). Never claim certainty." },
         { role: "user", content: `Analyze this checkout failure evidence:\n${evidenceRecords.join("\n")}` },
       ],
-    }), 24_000, "ai& inference");
+    }), 20_000, "ai& inference");
     const content = completion.choices[0]?.message.content || "{}";
+    let analysis: Record<string, unknown> | undefined;
+    try { analysis = JSON.parse(content) as Record<string, unknown>; } catch {}
     return {
-      analysis: JSON.parse(content),
-      receipt: { provider: "ai&", label: "Kimi K2.7 via ai&", mode: "live", status: "success", durationMs: elapsed(start), externalId: completion.id, detail: "Structured cause analysis generated on ai& Japan inference." },
+      analysis,
+      receipt: { provider: "ai&", label: "Kimi K2.7 via ai&", mode: "live", status: analysis ? "success" : "fallback", durationMs: elapsed(start), externalId: completion.id, detail: analysis ? "Structured cause analysis generated on ai& Japan inference." : "Kimi reasoning completed; recorded schema retained because the structured answer was truncated." },
     };
   } catch (error) {
     return fallback("ai&", "Kimi K2.7 via ai&", start, message(error));
@@ -181,8 +185,12 @@ export async function runNosana(seed: Hypothesis[]): Promise<{ receipt: Provider
       const parsed = JSON.parse(json.choices?.[0]?.message?.content || "{}") as { supported?: boolean; confidence?: number; evidence?: string };
       return { ...hypothesis, supported: parsed.supported ?? hypothesis.supported, confidence: parsed.confidence ?? hypothesis.confidence, evidence: parsed.evidence ?? hypothesis.evidence };
     };
-    const hypotheses = await Promise.all(seed.map(evaluate));
-    return { hypotheses, receipt: { provider: "nosana", label: "Nosana parallel evaluators", mode: "live", status: "success", durationMs: elapsed(start), externalId: deploymentId, detail: "Three hypotheses evaluated concurrently on decentralized GPU inference." } };
+    try {
+      const hypotheses = await Promise.all(seed.map(evaluate));
+      return { hypotheses, receipt: { provider: "nosana", label: "Nosana parallel evaluators", mode: "live", status: "success", durationMs: elapsed(start), externalId: deploymentId, detail: "Three hypotheses evaluated concurrently on decentralized GPU inference." } };
+    } catch (error) {
+      return { hypotheses: seed, receipt: { provider: "nosana", label: "Nosana parallel evaluators", mode: "live", status: "fallback", durationMs: elapsed(start), externalId: deploymentId, detail: `Running GPU deployment reached; recorded scores retained after ${message(error).slice(0, 64)}.` } };
+    }
   } catch (error) {
     return fallback("nosana", "Nosana parallel evaluators", start, message(error));
   }
