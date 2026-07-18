@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import type { InvestigationReport } from "@/lib/types";
+import TraceCore3D from "@/components/TraceCore3D";
 
 const stages = [
   { name: "Baseline loaded", detail: "Known-good checkout evidence indexed", icon: Database, provider: "Tracefall" },
@@ -101,6 +102,7 @@ export default function Home() {
         </div>
 
         <div className="trace-scene" aria-label="3D customer journey trace visualization">
+          <TraceCore3D />
           <div className="scene-orbit orbit-one" /><div className="scene-orbit orbit-two" />
           <div className="scene-grid" />
           <div className="trace-card">

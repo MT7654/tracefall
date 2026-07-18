@@ -2,7 +2,9 @@
   "name": "tracefall",
   "version": "0.1.0",
   "private": true,
-  "engines": { "node": ">=20.18.0" },
+  "engines": {
+    "node": ">=20.18.0"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -13,6 +15,7 @@
   },
   "dependencies": {
     "@daytona/sdk": "0.199.0",
+    "@types/three": "^0.185.1",
     "https-proxy-agent": "9.1.0",
     "lucide-react": "1.25.0",
     "next": "15.5.7",
@@ -20,6 +23,7 @@
     "openai": "6.15.0",
     "react": "19.2.7",
     "react-dom": "19.2.7",
+    "three": "^0.185.1",
     "zod": "4.3.6"
   },
   "devDependencies": {
