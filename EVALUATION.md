@@ -23,7 +23,7 @@ Inspect `lib/integrations.ts`:
 - `runOxylabs`: authenticated Web Unblocker agent with SG/US geo headers.
 - `runDoubleword`: OpenAI-compatible embeddings and local cosine ranking.
 - `runAiAnd`: OpenAI-compatible structured Kimi K2.7 completion.
-- `runNosana`: deployment lookup, endpoint discovery, and `Promise.all` hypothesis evaluations.
+- `runNosana`: deployment lookup, endpoint discovery, and one bounded structured review of all hypotheses.
 
 Inspect `lib/orchestrator.ts` to confirm Daytona runs first, enrichment fans out concurrently, and Nosana receives the hypotheses.
 
@@ -40,4 +40,3 @@ Inspect `lib/orchestrator.ts` to confirm Daytona runs first, enrichment fans out
 ## Failure semantics
 
 Each external adapter can fall back independently. A provider receipt explicitly says `live` or `demo`; the project never silently presents fixture data as live output.
-

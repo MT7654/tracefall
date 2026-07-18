@@ -185,7 +185,7 @@ export async function runNosana(seed: Hypothesis[]): Promise<{ receipt: Provider
               properties: {
                 title: { type: "string" },
                 supported: { type: "boolean" },
-                confidence: { type: "number" },
+                confidence: { type: "integer", minimum: 0, maximum: 100 },
                 evidence: { type: "string" },
               },
               required: ["title", "supported", "confidence", "evidence"],
@@ -194,13 +194,14 @@ export async function runNosana(seed: Hypothesis[]): Promise<{ receipt: Provider
         },
         required: ["hypotheses"],
       };
-      const prompt = `Evaluate all three incident hypotheses against the evidence. Preserve each title exactly. Return only the requested JSON.\nEvidence: ${evidenceRecords.join(" ")}\nHypotheses: ${JSON.stringify(seed.map(({ title, supported, confidence }) => ({ title, priorSupported: supported, priorConfidence: confidence })))}`;
+      const prompt = `Evaluate all three incident hypotheses against the evidence. Preserve each title exactly. Confidence is the 0-100 likelihood that the hypothesis is the actual cause, so unsupported hypotheses must receive low confidence. Keep each evidence explanation under 12 words. Return only the requested JSON.\nEvidence: ${evidenceRecords.join(" ")}\nHypotheses: ${JSON.stringify(seed.map(({ title, supported, confidence }) => ({ title, priorSupported: supported, priorConfidence: confidence })))}`;
       const result = await timeout(fetch(`${endpoint.replace(/\/$/, "")}/api/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           model: process.env.NOSANA_MODEL || "qwen3.5:9b",
           stream: false,
+          think: false,
           keep_alive: "30m",
           format: schema,
           messages: [{ role: "user", content: prompt }],
