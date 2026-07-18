@@ -118,7 +118,7 @@ These systems were selected because the investigation needs five different capab
 | Product | Meaningful role | Source | Visible proof |
 |---|---|---|---|
 | **Daytona** | Creates an isolated TypeScript sandbox, executes the reproduction, and returns structured evidence | `lib/integrations.ts → runDaytona()` | Sandbox ID, duration, live/demo receipt |
-| **Oxylabs** | Fetches the public journey probe through Singapore and US Residential Proxy exits | `lib/integrations.ts → runOxylabs()` | Regional HTTP status, latency, SDK state |
+| **Oxylabs** | Fetches the controlled public journey probe through Singapore and US Residential Proxy exits | `lib/integrations.ts → runOxylabs()` | Regional HTTP status, latency, SDK state |
 | **Doubleword** | Embeds five evidence records using Qwen3-Embedding-8B and ranks them with cosine similarity | `lib/integrations.ts → runDoubleword()` | Ranked historical evidence and model receipt |
 | **Kimi AI via ai&** | Generates structured hypotheses, summary, confidence, and recommended action | `lib/integrations.ts → runAiAnd()` | ai& completion ID and generated diagnosis |
 | **Nosana** | Verifies the supplied Qwen GPU deployment and scores three competing causes in one bounded structured review | `lib/integrations.ts → runNosana()` | Deployment ID, GPU hypothesis scores |

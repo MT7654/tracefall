@@ -86,11 +86,20 @@ export async function runOxylabs(): Promise<{
       const proxyUser = username.startsWith("customer-") ? `${username}-cc-${code}` : `customer-${username}-cc-${code}`;
       const gateway = process.env.OXYLABS_PROXY_URL || "http://pr.oxylabs.io:7777";
       const agent = new HttpsProxyAgent(gateway.replace("://", `://${encodeURIComponent(proxyUser)}:${encodeURIComponent(password)}@`));
-      const response = await timeout(fetchProxy(target, {
+      const probeUrl = target.includes("/api/journey-probe") ? `${target}?region=${code}` : target;
+      const response = await timeout(fetchProxy(probeUrl, {
         agent,
       }), 15_000, `Oxylabs ${code}`);
       const body = await response.text();
-      return { country, code, status: response.status, latencyMs: elapsed(t), scriptLoaded: response.ok && body.length > 20 };
+      let observation: { checkoutStatus?: number; paymentSdk?: string } | undefined;
+      try { observation = JSON.parse(body) as { checkoutStatus?: number; paymentSdk?: string }; } catch {}
+      return {
+        country,
+        code,
+        status: observation?.checkoutStatus ?? response.status,
+        latencyMs: elapsed(t),
+        scriptLoaded: observation?.paymentSdk ? observation.paymentSdk === "ready" : response.ok && body.length > 20,
+      };
     };
     const regions = await Promise.all([probe("Singapore", "SG"), probe("United States", "US")]);
     return {
