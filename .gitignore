@@ -12,3 +12,5 @@ node_modules_partial/
 *.tsbuildinfo
 dev.stdout.log
 dev.stderr.log
+
+.vercel
